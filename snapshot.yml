@@ -1,0 +1,30 @@
+- name: Take snapshot
+  hosts: localhost
+  vars_prompt:
+    - name: vcenter_username
+      prompt: user
+    - name: vcenter_password
+      prompt: password
+  vars_files:
+    - credentials.yml
+    - list.yml
+  tasks:
+    - name: Create a snapshot
+      vmware_guest_snapshot:
+        hostname: "{{ vcenter_hostname }}"
+        username: "{{ vcenter_username }}"
+        password: "{{ vcenter_password }}"
+        datacenter: "{{ datacenter_name }}"
+        folder: "/{{ datacenter_name }}/"
+        name: "{{ item }}"
+        state: revert
+        snapshot_name: snapshot1
+        validate_certs: no
+        description: snapshot from Ansible
+      delegate_to: localhost
+      with_items:
+        - Unix_RHEL_8
+        - Unix_RHEL_7
+        - Unix_OEL_7_8
+        - Unix_LDAP_EL6
+
